@@ -3,16 +3,14 @@
 
 #include <map>
 #include <string>
+#include <vector>
 #include "DataBase.hpp"
 #include <string_view>
 #include <stdexcept>
 
 class DataBaseController {
 public:
-    DataBaseController() {
-        _tables.try_emplace("A");
-        _tables.try_emplace("B");
-    }
+    using ResultType = std::vector<std::tuple<int, std::string, std::string>>;
 
     class InvalidOperation: public std::runtime_error {
     public:
@@ -21,9 +19,16 @@ public:
     };
 
     void insert(std::string tableName, size_t id, std::string value);
-private:
+    void truncate(std::string tableName);
+    ResultType insertion();
+    ResultType symmetricDifference();
 
-    std::map<std::string, DataBase> _tables;
+private:
+    std::mutex _mutex{};
+    std::map<std::string, DataBase> _tables {
+        {std::make_pair("A", DataBase())}, 
+        {std::make_pair("B", DataBase())}
+    };
 };
 
 #endif

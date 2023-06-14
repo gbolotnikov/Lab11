@@ -3,44 +3,47 @@ cmake_minimum_required(VERSION 3.10)
 set(PATCH_VERSION "1" CACHE INTERNAL "Patch version")
 set(PROJECT_VESRION 0.0.${PATCH_VERSION})
 
-project(bulk_server VERSION ${PROJECT_VESRION})
+project(join_server VERSION ${PROJECT_VESRION})
 
 find_package(Boost COMPONENTS COMPONENTS program_options REQUIRED)
+find_package(Threads)
 find_package(Boost REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIRS})
 
-add_executable(bulk_server main.cpp
+add_executable(join_server main.cpp
     Server.cpp
     Session.cpp
     SessionController.cpp
     DataBaseController.cpp
  )
 
-set_target_properties(bulk_server PROPERTIES
+set_target_properties(join_server PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
 )
 
-target_include_directories(bulk_server PRIVATE "${CMAKE_BINARY_DIR}")
+target_include_directories(join_server PRIVATE "${CMAKE_BINARY_DIR}")
 
 if(WIN32)
-target_link_libraries(bulk_server PRIVATE 
+target_link_libraries(join_server PRIVATE 
     ws2_32
     wsock32 
     ${Boost_LIBRARIES} 
+    ${CMAKE_THREAD_LIBS_INIT}
     Boost::program_options 
     stdc++fs)
 else()
-target_link_libraries(bulk_server PRIVATE 
+target_link_libraries(join_server PRIVATE 
     ${Boost_LIBRARIES} 
+    ${CMAKE_THREAD_LIBS_INIT}
     Boost::program_options 
     stdc++fs)
 endif()
 
 
 
-install(TARGETS bulk_server RUNTIME DESTINATION bin)
+install(TARGETS join_server RUNTIME DESTINATION bin)
 
 set(CPACK_GENERATOR DEB)
 

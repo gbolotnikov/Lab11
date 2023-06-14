@@ -10,7 +10,7 @@
 class SessionController {  
 private:
     using Token = std::vector<std::string>;
-    using FnCmd = std::function<void(SessionController*, const Token&)>;
+    using FnCmd = std::function<std::string(const Token&)>;
     using FnCmdMap = std::map<std::string, FnCmd>;      
 public:
     std::string process(std::string_view str);
@@ -27,15 +27,18 @@ private:
 
     std::string insert(const Token& token) const;
     std::string truncate(const Token& token) const;
-    std::string insertion(const Token& token) const;
+    std::string intersection(const Token& token) const;
     std::string symmetricDifference(const Token& token) const;
-
+    std::string toString(DataBaseController::ResultType& result) const;
     
     mutable DataBaseController _dataBase;
     static constexpr auto Delimetr = ' ';
     Token parcer(std::string_view str);
     const FnCmdMap _cmdMap {
-        {std::make_pair("INSERT", &SessionController::insert)}
+        {std::make_pair("INSERT", [this](const Token& token){return insert(token);})},
+        {std::make_pair("TRUNCATE", [this](const Token& token){return truncate(token);})},
+        {std::make_pair("INTERSECTION", [this](const Token& token){return intersection(token);})},
+        {std::make_pair("SYMMETRIC_DIFFERENCE", [this](const Token& token){return symmetricDifference(token);})}
     };
 };
 

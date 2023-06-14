@@ -22,8 +22,12 @@ void Session::do_read()
         {
             if (!ec)
             {
-                std::string s;
-                do_write(_controller.process(s));
+                _buffer.commit(length);
+                std::string str;
+                std::istream is(&_buffer);
+                std::getline(is, str);
+                _buffer.consume(length);
+                do_write(_controller.process(str));
             }
         });
 }
